@@ -1,0 +1,10 @@
+{
+  "name": "build-your-own-angularjs",
+  "private": "true",
+  "devDependencies": {
+    "mocha": "~2.2.5",
+    "chai": "~2.3.0",
+    "jquery": "~2.1.4",
+    "lodash": "~3.9.0"
+  }
+}
