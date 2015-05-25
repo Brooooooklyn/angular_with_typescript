@@ -8,6 +8,10 @@ var phantomjs = require('phantomjs');
 
 var path = {
   'jsapp': './app/**/*.ts',
+  'libs': [
+            './bower_components/jquery/dist/jquery.js', './bower_componments/lodash/lodash.js',
+            './node_modules/chai-spies/chai-spies.js'
+          ],
   'jstest': './test/spec/**/*.js'
 };
 
@@ -17,6 +21,12 @@ gulp.task('compile', function () {
     .pipe($.typescript({
       out: 'app.js'
     }))
+    .pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('build-lib', function () {
+   return gulp.src(path.libs)
+    .pipe($.concat('lib.js'))
     .pipe(gulp.dest('./dist/'));
 });
 
@@ -41,6 +51,7 @@ gulp.task('test', ['build-test'], function () {
       routes: {
         '/dist': 'dist',
         '/bower_components': 'bower_components',
+        '/node_modules': 'node_modules'
       }
     }
   });
@@ -51,11 +62,11 @@ gulp.task('test', ['build-test'], function () {
   // watch for changes
   gulp.watch([
     'test/*.html',
-    'src/**/*.js',
+    'src/**/*.ts',
     'test/spec/**/*.js'
   ]).on('change', reload);
 
 });
 
 
-gulp.task('default', $.sequence('compile' ,'test'));
+gulp.task('default', $.sequence('compile' , 'build-lib', 'test'));
