@@ -1,3 +1,3 @@
-//class Scope {
-//  
-//}
+class Scope1 {
+  
+}

@@ -1,4 +1,4 @@
-class Scope2 {
+class Scope3 {
   $$watchers: Array<any> = [];
   
   $watch(watchFn: Function, listenerFn: Function) {
@@ -10,7 +10,9 @@ class Scope2 {
   }
   
   $digest() {
+    var self = this;
     this.$$watchers.map(function(watcher: any) {
+       watcher.watchFn(self);
        watcher.listenerFn();
     });
   }

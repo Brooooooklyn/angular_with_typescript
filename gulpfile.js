@@ -56,7 +56,7 @@ gulp.task('test', ['build-test'], function () {
     }
   });
   
-  gulp.watch('src/**/*.ts', ['compile']);
+  gulp.watch('app/**/*.ts', ['compile']);
   gulp.watch('test/spec/**/*.js', ['build-test']);
 
   // watch for changes
