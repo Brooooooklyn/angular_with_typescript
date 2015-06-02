@@ -1,7 +1,7 @@
 class Scope3 {
-  $$watchers: Array<any> = [];
+  private $$watchers: Array<any> = [];
   
-  $watch(watchFn: Function, listenerFn: Function) {
+  public $watch(watchFn: Function, listenerFn: Function) {
     var watcher: any = {
       watchFn: watchFn,
       listenerFn: listenerFn
@@ -9,7 +9,7 @@ class Scope3 {
     this.$$watchers.push(watcher);
   }
   
-  $digest() {
+  public $digest() {
     var self = this;
     this.$$watchers.map(function(watcher: any) {
        watcher.watchFn(self);

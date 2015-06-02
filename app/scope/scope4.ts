@@ -1,15 +1,20 @@
 class Scope4 {
-  $$watchers: Array<any> = [];
+  private $$watchers: Array<any> = [];
   
-  $watch(watchFn: Function, listenerFn: Function) {
+  private initWatchVal():void {
+    
+  }
+  
+  public $watch(watchFn: Function, listenerFn: Function) {
     var watcher: any = {
       watchFn: watchFn,
-      listenerFn: listenerFn
+      listenerFn: listenerFn,
+      last: this.initWatchVal
     }
     this.$$watchers.push(watcher);
   }
   
-  $digest() {
+  public $digest() {
     var self: Object = this;
     var oldValue: String;
     var newValue: String;
@@ -18,7 +23,9 @@ class Scope4 {
        oldValue = watcher.last;
        if(newValue !== oldValue) {
          watcher.last = newValue;
-         watcher.listenerFn(newValue, oldValue, self);
+         watcher.listenerFn(newValue,
+          (oldValue === this.initWatchValue ? newValue : oldValue), 
+          self);
        }
     });
   }
