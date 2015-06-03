@@ -1,11 +1,11 @@
-class Scope4 {
+class Scope5 {
   private $$watchers: Array<any> = [];
   
-  private initWatchVal():void {
+  private initWatchVal(): void {
     
   }
   
-  public $watch(watchFn: Function, listenerFn: Function) {
+  public $watch(watchFn: Function, listenerFn: Function): void {
     var watcher: any = {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
@@ -14,10 +14,11 @@ class Scope4 {
     this.$$watchers.push(watcher);
   }
   
-  public $digest() {
+  private $digestOnce(): Boolean {
     var self: Object = this;
     var oldValue: String;
     var newValue: String;
+    var dirty: Boolean;
     this.$$watchers.map(function(watcher: any) {
        newValue = watcher.watchFn(self);
        oldValue = watcher.last;
@@ -26,7 +27,17 @@ class Scope4 {
          watcher.listenerFn(newValue,
           (oldValue === this.initWatchValue ? newValue : oldValue), 
           self);
+          dirty = true;
        }
     });
+    return dirty;
+  }
+  
+  public $digest(): void {
+    var dirty: Boolean;
+    do {
+      dirty = this.$digestOnce();
+      
+    } while (dirty);
   }
 }

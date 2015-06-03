@@ -56,5 +56,14 @@ describe('Scope test', function () {
       scope.$digest();
       expect(oldValueGiven).to.equal(123);
     });
+    
+    it('may have watchers that omit the listener function', function () {
+      var watchFn = chai.spy('something');
+      scope.$watch(watchFn);
+      
+      scope.$digest();
+      
+      expect(watchFn).to.have.been.called();
+    });
 	});
 });
