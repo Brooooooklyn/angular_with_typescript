@@ -14,11 +14,11 @@ class Scope5 {
     this.$$watchers.push(watcher);
   }
   
-  private $digestOnce(): Boolean {
+  private $digestOnce(): boolean {
     var self: Object = this;
-    var oldValue: String;
-    var newValue: String;
-    var dirty: Boolean;
+    var oldValue: string;
+    var newValue: string;
+    var dirty: boolean;
     this.$$watchers.map(function(watcher: any) {
        newValue = watcher.watchFn(self);
        oldValue = watcher.last;
@@ -34,10 +34,13 @@ class Scope5 {
   }
   
   public $digest(): void {
-    var dirty: Boolean;
+    var dirty: boolean;
+    var ttl : number = 10;
     do {
       dirty = this.$digestOnce();
-      
+      if (dirty && !(ttl--)) {
+        throw '10 digest iterations reached';
+      }
     } while (dirty);
   }
 }
