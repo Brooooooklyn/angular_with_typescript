@@ -9,7 +9,7 @@ var phantomjs = require('phantomjs');
 var path = {
   'jsapp': './app/**/*.ts',
   'libs': [
-            './bower_components/jquery/dist/jquery.js', './bower_componments/lodash/lodash.js',
+            './bower_components/lodash/lodash.js',
             './node_modules/chai-spies/chai-spies.js'
           ],
   'jstest': './test/spec/**/*.js'
