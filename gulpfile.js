@@ -5,6 +5,7 @@ var $ = require('gulp-load-plugins')();
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var phantomjs = require('phantomjs');
+var merge2 = require('merge2');
 
 var path = {
   'jsapp': './app/**/*.ts',
@@ -36,10 +37,15 @@ gulp.task('clean', function () {
 });
 
 gulp.task('build-test', function () {
-  return gulp.src(path.jstest)
+  return merge2(
+    gulp.src('./test/spec/**/*.start'),
+    gulp.src(path.jstest)
     .pipe($.sourcemaps.init())
-    .pipe($.concat('spec.js'))
-    .pipe(gulp.dest('./test/'));
+    .pipe($.concat('spec.js')),
+    gulp.src('./test/spec/**/*.end')
+  )
+  .pipe($.concat('spec.js'))
+  .pipe(gulp.dest('./test/'));
 });
 
 gulp.task('test', ['build-test'], function () {

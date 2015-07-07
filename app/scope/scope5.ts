@@ -1,3 +1,4 @@
+/// <reference path="../lodash.d.ts" />
 class Scope5 {
   private $$watchers: Array<any> = [];
   
@@ -19,7 +20,7 @@ class Scope5 {
     var oldValue: string;
     var newValue: string;
     var dirty: boolean;
-    this.$$watchers.map(function(watcher: any) {
+    _.forEach(this.$$watchers ,function(watcher: any) {
        newValue = watcher.watchFn(self);
        oldValue = watcher.last;
        if(newValue !== oldValue) {

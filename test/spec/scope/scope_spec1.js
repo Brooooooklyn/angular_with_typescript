@@ -1,12 +1,10 @@
-/* global describe, it, expect */
+/* global describe, it, expect Scope1 */
 'use strict';
 
-describe('Scope test', function () {
-	describe('Core function test', function () {
-		it('can be constructed and used as an object', function () {
-      var scope = new Scope1();
-      scope.aProperty = 1;
-      expect(scope.aProperty).to.equal(1);
-    });
-	});
+  
+var scope = new Scope1();
+
+it('can be constructed and used as an object', function () {
+  scope.aProperty = 1;
+  expect(scope.aProperty).to.equal(1);
 });

@@ -1,5 +1,5 @@
 class Scope2 {
-  private $$watchers: Array<any> = [];
+  protected $$watchers: Array<any> = [];
   
   public $watch(watchFn: Function, listenerFn: Function) {
     var watcher: any = {

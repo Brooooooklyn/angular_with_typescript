@@ -5,13 +5,15 @@ class Scope6 {
   
   private initWatchVal(): void { }
   
-  public $watch(watchFn: Function, listenerFn: Function): void {
-    var watcher: any = {
+  public $watch(watchFn: Function, listenerFn: Function, valueEq: boolean): void {
+    var watcher: Object = {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
+      valueEq: !!valueEq,
       last: this.initWatchVal
     }
     this.$$watchers.push(watcher);
+    this.$$lastDirtyWatch = null;
   }
   
   private $digestOnce(): boolean {
@@ -22,9 +24,9 @@ class Scope6 {
     _.forEach(this.$$watchers, function(watcher: any) {
        newValue = watcher.watchFn(self);
        oldValue = watcher.last;
-       if(newValue !== oldValue) {
+       if(!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
          self.$$lastDirtyWatch = watcher;
-         watcher.last = newValue;
+         watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
          watcher.listenerFn(newValue,
           (oldValue === this.initWatchValue ? newValue : oldValue), 
           self);
@@ -34,6 +36,16 @@ class Scope6 {
        }
     });
     return dirty;
+  }
+  
+  private $$areEqual(newValue: any, oldValue: any, valueEq): boolean {
+    if(valueEq) {
+      return _.isEqual(newValue, oldValue);
+    }else {
+      return newValue === oldValue ||
+        (typeof newValue === 'number' && typeof oldValue === 'number' &&
+          isNaN(newValue) && isNaN(oldValue));
+    }
   }
   
   public $digest(): void {
