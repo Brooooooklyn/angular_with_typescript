@@ -1,6 +1,6 @@
 {
   "name": "build-your-own-angularjs",
-  "private": "true",
+  "private": true,
   "devDependencies": {
     "mocha": "~2.2.5",
     "chai": "~2.3.0",

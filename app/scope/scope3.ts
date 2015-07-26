@@ -11,7 +11,7 @@ class Scope3 {
   
   public $digest() {
     var self = this;
-    this.$$watchers.map(function(watcher: any) {
+    this.$$watchers.forEach(function(watcher: any) {
        watcher.watchFn(self);
        watcher.listenerFn();
     });
