@@ -18,7 +18,7 @@ class Scope8 {
       valueEq: !!valueEq,
       last: this.initWatchVal
     }
-    this.$$watchers.push(watcher);
+    this.$$watchers.unshift(watcher);
     this.$$lastDirtyWatch = null;
     return function(): void {
       var index = self.$$watchers.indexOf(watcher);
@@ -33,7 +33,7 @@ class Scope8 {
     var oldValue: string;
     var newValue: string;
     var dirty: boolean;
-    _.forEach(this.$$watchers, function(watcher: any) {
+    _.forEachRight(this.$$watchers, function(watcher: any) {
       try {
         newValue = watcher.watchFn(self);
         oldValue = watcher.last;

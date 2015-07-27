@@ -734,7 +734,7 @@ it("allows destroying a $watch druing digest", function() {
   );
   
   scope.$digest();
-  expect(watchCalls).to.equal(['first', 'second', 'third', 'first', 'third']);
+  expect(watchCalls).deep.equal(['first', 'second', 'third', 'first', 'third']);
 });
 
 });
