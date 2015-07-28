@@ -737,4 +737,83 @@ it("allows destroying a $watch druing digest", function() {
   expect(watchCalls).deep.equal(['first', 'second', 'third', 'first', 'third']);
 });
 
+it("allows a $watch to destroy another during digest", function() {
+  scope.aValue = 'abc';
+  scope.counter = 0;
+  
+  scope.$watch(
+    function(scope) {
+      return scope.aValue;
+    },
+    function(newValue, oldValue, scope) {
+      destroyWatch();
+    }
+  );
+  
+  var destroyWatch = scope.$watch(
+    function(scope) {},
+    function(newValue, oldValue, scope) { }
+  );
+  
+  scope.$watch(
+    function(scope) { return scope.aValue; },
+    function(newValue, oldValue, scope) {
+      scope.counter ++;
+    }
+  );
+  
+  scope.$digest();
+  expect(scope.counter).to.equal(1);
+});
+
+it("allows destroying several $watches during digest", function() {
+  scope.aValue = 'abc';
+  scope.counter = 0;
+  
+  var destroyWatch1 = scope.$watch(
+    function(scope) {
+      destroyWatch1();
+      destroyWatch2();
+    }
+  );
+  
+  var destroyWatch2 = scope.$watch(
+    function(scope) { return scope.aValue; },
+    function(newValue, oldValue, scope) {
+      scope.counter ++;
+    }
+  );
+  
+  scope.$digest();
+  expect(scope.counter).to.equal(0);
+});
+/* global scope describe, it, expect, beforeEach, Scope9, _ */
+
+describe('$watchGroup', function() {
+  
+  beforeEach(function() {
+    scope = new Scope9();
+  });
+  
+  it('takes watches as an array and calls listener with arrays', function() {
+    var gotNewValues, gotOldValues;
+    
+    scope.aValue = 1;
+    scope.anotherValue = 2;
+    
+    scope.$watchGroup([
+      function(scope) { return scope.aValue; },
+      function(scope) { return scope.anotherValue; }
+    ], function(newValues, oldValues, scope) {
+      gotNewValues = newValues;
+      gotOldValues = oldValues;
+    });
+    
+    scope.$digest();
+    expect(gotNewValues).deep.equal([1, 2]);
+    expect(gotOldValues.length).to.equal(2);
+    
+  });
+});
+
 });

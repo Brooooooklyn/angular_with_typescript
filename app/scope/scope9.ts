@@ -1,5 +1,5 @@
 /// <reference path="../lodash.d.ts" />
-class Scope8 {
+class Scope9 {
   private $$watchers: Array<any> = [];
   private $$lastDirtyWatch: any = null;
   private $$asyncQueue: Array<any> = [];
@@ -10,8 +10,8 @@ class Scope8 {
   
   private initWatchVal(): void { }
   
-  public $watch(watchFn: Function, listenerFn: Function, valueEq: boolean): Function {
-    var self: Scope8 = this;
+  public $watch(watchFn: Function, listenerFn: Function, valueEq: boolean = true): Function {
+    var self: Scope9 = this;
     var watcher: Object = {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
@@ -119,7 +119,7 @@ class Scope8 {
   }
   
   public $applyAsync(expr: Function): void {
-    var self: Scope8 = this;
+    var self: Scope9 = this;
     self.$$applyAsyncQueue.push(function() {
       self.$eval(expr);
     });
@@ -132,7 +132,7 @@ class Scope8 {
   }
   
   public $evalAsync(expr: Function): void {
-    var self: Scope8 = this;
+    var self: Scope9 = this;
     if(!self.$$phase && !self.$$asyncQueue.length) {
       setTimeout(function() {
         if (self.$$asyncQueue.length) {
@@ -167,6 +167,19 @@ class Scope8 {
   
   public $$postDigest(fn): void {
     this.$$postDigestQueue.push(fn);
+  }
+  
+  public $watchGroup(watchFns: Array<any>, listenerFn: Function) {
+    var self: Scope9 = this;
+    var newValues: Array<Function> = new Array(watchFns.length);
+    var oldValues: Array<Function> = new Array(watchFns.length);
+    _.forEach(watchFns, function(watchFn: Function, i: number) {
+      self.$watch(watchFn, function(newValue, oldValue) {
+        newValues[i] = newValue;
+        oldValues[i] = oldValue;
+        listenerFn(newValues, oldValues, self);
+      });
+    });
   }
   
 }
