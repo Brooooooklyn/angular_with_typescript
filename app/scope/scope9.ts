@@ -16,7 +16,7 @@ class Scope9 {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
       valueEq: !!valueEq,
-      last: this.initWatchVal
+      last: self.initWatchVal
     }
     this.$$watchers.unshift(watcher);
     this.$$lastDirtyWatch = null;
@@ -31,8 +31,8 @@ class Scope9 {
   
   private $digestOnce(): boolean {
     var self: any = this;
-    var oldValue: string;
-    var newValue: string;
+    var oldValue: any;
+    var newValue: any;
     var dirty: boolean;
     _.forEachRight(this.$$watchers, function(watcher: any) {
       try {
@@ -43,7 +43,7 @@ class Scope9 {
             self.$$lastDirtyWatch = watcher;
             watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
             watcher.listenerFn(newValue,
-            (oldValue === this.initWatchValue ? newValue : oldValue), 
+            (oldValue === self.initWatchVal ? newValue : oldValue),
               self);
             dirty = true;
           }else if(self.$$lastDirtyWatch === watcher) {
@@ -169,17 +169,53 @@ class Scope9 {
     this.$$postDigestQueue.push(fn);
   }
   
-  public $watchGroup(watchFns: Array<any>, listenerFn: Function) {
+  public $watchGroup(watchFns: Array<Function>, listenerFn: Function) {
     var self: Scope9 = this;
     var newValues: Array<Function> = new Array(watchFns.length);
     var oldValues: Array<Function> = new Array(watchFns.length);
-    _.forEach(watchFns, function(watchFn: Function, i: number) {
-      self.$watch(watchFn, function(newValue, oldValue) {
+    var changeReactionScheduled: boolean = false;
+    var firstRun: boolean = true;
+    
+    if(watchFns.length === 0) {
+      var shouldCall: boolean = true;
+      self.$evalAsync(function() {
+        if(shouldCall) {
+          listenerFn(newValues, newValues, self);
+        }
+      });
+      return function() {
+        shouldCall = false;
+      };
+    }
+    
+    function watchGroupListener() {
+      if(firstRun) {
+        firstRun = false;
+        listenerFn(newValues, newValues, self);
+      } else {
+        listenerFn(newValues, oldValues, self);
+      }
+      changeReactionScheduled = false;
+      
+    }
+    
+    var destroyFunctions = _.map(watchFns, function(watchFn, i) {
+      return self.$watch(watchFn, function(newValue, oldValue) {
         newValues[i] = newValue;
         oldValues[i] = oldValue;
-        listenerFn(newValues, oldValues, self);
+        
+        if(!changeReactionScheduled) {
+          changeReactionScheduled = true;
+          self.$evalAsync(watchGroupListener);
+        }
       });
     });
+    
+    return function() {
+      _.forEach(destroyFunctions, function(destroyFunction) {
+        destroyFunction();
+      });
+    }
   }
   
 }

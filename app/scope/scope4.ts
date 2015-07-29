@@ -1,7 +1,8 @@
+/// <reference path="../lodash.d.ts" />
 class Scope4 {
   private $$watchers: Array<any> = [];
   
-  private initWatchVal():void {
+  private initWatchVal(): void {
     
   }
   
@@ -15,16 +16,16 @@ class Scope4 {
   }
   
   public $digest() {
-    var self: Object = this;
-    var oldValue: String;
-    var newValue: String;
-    this.$$watchers.map(function(watcher: any) {
+    var self: Scope4 = this;
+    var oldValue: any;
+    var newValue: any;
+    _.forEach(this.$$watchers, function(watcher: any) {
        newValue = watcher.watchFn(self);
        oldValue = watcher.last;
        if(newValue !== oldValue) {
          watcher.last = newValue;
          watcher.listenerFn(newValue,
-          (oldValue === this.initWatchValue ? newValue : oldValue), 
+          (oldValue === self.initWatchVal ? newValue : oldValue), 
           self);
        }
     });

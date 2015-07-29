@@ -8,7 +8,7 @@ class Scope8 {
   private $$postDigestQueue: Array<any> = [];
   private $$phase: string = null;
   
-  private initWatchVal(): void { }
+  private initWatchVal():void { }
   
   public $watch(watchFn: Function, listenerFn: Function, valueEq: boolean): Function {
     var self: Scope8 = this;
@@ -16,7 +16,7 @@ class Scope8 {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
       valueEq: !!valueEq,
-      last: this.initWatchVal
+      last: self.initWatchVal
     }
     this.$$watchers.unshift(watcher);
     this.$$lastDirtyWatch = null;
@@ -30,9 +30,9 @@ class Scope8 {
   }
   
   private $digestOnce(): boolean {
-    var self: any = this;
-    var oldValue: string;
-    var newValue: string;
+    var self: Scope8 = this;
+    var oldValue: any;
+    var newValue: any;
     var dirty: boolean;
     _.forEachRight(this.$$watchers, function(watcher: any) {
       try {
@@ -43,7 +43,7 @@ class Scope8 {
             self.$$lastDirtyWatch = watcher;
             watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
             watcher.listenerFn(newValue,
-            (oldValue === this.initWatchValue ? newValue : oldValue), 
+            (oldValue === self.initWatchVal ? newValue : oldValue), 
               self);
             dirty = true;
           }else if(self.$$lastDirtyWatch === watcher) {

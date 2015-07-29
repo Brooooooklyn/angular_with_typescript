@@ -11,11 +11,12 @@ class Scope7 {
   private initWatchVal(): void { }
   
   public $watch(watchFn: Function, listenerFn: Function, valueEq: boolean): void {
+    var self: Scope7 = this;
     var watcher: Object = {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
       valueEq: !!valueEq,
-      last: this.initWatchVal
+      last: self.initWatchVal
     }
     this.$$watchers.push(watcher);
     this.$$lastDirtyWatch = null;
@@ -34,7 +35,7 @@ class Scope7 {
           self.$$lastDirtyWatch = watcher;
           watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
           watcher.listenerFn(newValue,
-          (oldValue === this.initWatchValue ? newValue : oldValue), 
+          (oldValue === self.initWatchVal ? newValue : oldValue), 
             self);
           dirty = true;
         }else if(self.$$lastDirtyWatch === watcher) {

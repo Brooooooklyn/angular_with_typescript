@@ -7,18 +7,19 @@ class Scope5 {
   }
   
   public $watch(watchFn: Function, listenerFn: Function): void {
+    var self: Scope5 = this;
     var watcher: any = {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
-      last: this.initWatchVal
+      last: self.initWatchVal
     }
     this.$$watchers.push(watcher);
   }
   
   private $digestOnce(): boolean {
-    var self: Object = this;
-    var oldValue: string;
-    var newValue: string;
+    var self: Scope5 = this;
+    var oldValue: any;
+    var newValue: any;
     var dirty: boolean;
     _.forEach(this.$$watchers ,function(watcher: any) {
        newValue = watcher.watchFn(self);
@@ -26,7 +27,7 @@ class Scope5 {
        if(newValue !== oldValue) {
          watcher.last = newValue;
          watcher.listenerFn(newValue,
-          (oldValue === this.initWatchValue ? newValue : oldValue), 
+          (oldValue === self.initWatchVal ? newValue : oldValue), 
           self);
           dirty = true;
        }

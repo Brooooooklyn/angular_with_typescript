@@ -6,11 +6,12 @@ class Scope6 {
   private initWatchVal(): void { }
   
   public $watch(watchFn: Function, listenerFn: Function, valueEq: boolean): void {
+    var self: Scope6 = this;
     var watcher: Object = {
       watchFn: watchFn,
       listenerFn: listenerFn || function() {},
       valueEq: !!valueEq,
-      last: this.initWatchVal
+      last: self.initWatchVal
     }
     this.$$watchers.push(watcher);
     this.$$lastDirtyWatch = null;
@@ -18,8 +19,8 @@ class Scope6 {
   
   private $digestOnce(): boolean {
     var self: any = this;
-    var oldValue: string;
-    var newValue: string;
+    var oldValue: any;
+    var newValue: any;
     var dirty: boolean;
     _.forEach(this.$$watchers, function(watcher: any) {
        newValue = watcher.watchFn(self);
@@ -28,7 +29,7 @@ class Scope6 {
          self.$$lastDirtyWatch = watcher;
          watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
          watcher.listenerFn(newValue,
-          (oldValue === this.initWatchValue ? newValue : oldValue), 
+          (oldValue === self.initWatchVal ? newValue : oldValue), 
           self);
           dirty = true;
        }else if(self.$$lastDirtyWatch === watcher) {
@@ -38,7 +39,7 @@ class Scope6 {
     return dirty;
   }
   
-  private $$areEqual(newValue: any, oldValue: any, valueEq): boolean {
+  private $$areEqual(newValue: any, oldValue: any, valueEq: boolean): boolean {
     if(valueEq) {
       return _.isEqual(newValue, oldValue);
     }else {
