@@ -13,8 +13,31 @@ var path = {
             './bower_components/lodash/lodash.js',
             './node_modules/chai-spies/chai-spies.js'
           ],
-  'jstest': './test/spec/**/*.js'
+  'jstest': [
+              './test/spec/scope/digest',
+              './test/spec/scope/watchgroup'
+            ]
 };
+
+
+function buildtest() {
+  var dir = path.jstest;
+  var teststream = [];
+  for (var index = 0; index < dir.length; index++) {
+    var element = dir[index];
+    var jsstream = gulp.src(element + '/*.js');
+    var startstream = gulp.src(element + '/*.start');
+    var endstream = gulp.src(element + '/*.end');
+    var buildstream = merge2(
+      startstream,
+      jsstream,
+      endstream
+    ).pipe($.concat('spec.js'));
+    teststream.push(buildstream);
+  }
+  
+  return teststream;
+}
 
 gulp.task('compile', function () {
   return gulp.src(path.jsapp)
@@ -38,11 +61,9 @@ gulp.task('clean', function () {
 
 gulp.task('build-test', function () {
   return merge2(
-    gulp.src('./test/spec/**/*.start'),
-    gulp.src(path.jstest)
-    .pipe($.sourcemaps.init())
-    .pipe($.concat('spec.js')),
-    gulp.src('./test/spec/**/*.end')
+    gulp.src('./test/spec/*/*.start'),
+    buildtest(),
+    gulp.src('./test/spec/*/*.end')
   )
   .pipe($.concat('spec.js'))
   .pipe(gulp.dest('./test/'));
