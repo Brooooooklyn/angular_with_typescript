@@ -15,7 +15,8 @@ var path = {
           ],
   'jstest': [
               './test/spec/scope/digest',
-              './test/spec/scope/watchgroup'
+              './test/spec/scope/watchgroup',
+              './test/spec/scope/inherit'
             ]
 };
 
