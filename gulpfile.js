@@ -90,7 +90,7 @@ gulp.task('test', ['build-test'], function () {
   // watch for changes
   gulp.watch([
     'test/*.html',
-    'src/**/*.ts',
+    'app/**/*.ts',
     'test/spec/**/*.js'
   ]).on('change', reload);
 

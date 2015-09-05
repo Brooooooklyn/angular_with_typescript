@@ -21,12 +21,12 @@ class Scope11 {
       last: self.initWatchVal
     }
     this.$$watchers.unshift(watcher);
-    this.$$lastDirtyWatch = null;
+    this.$root.$$lastDirtyWatch = null;
     return function(): void {
       var index = self.$$watchers.indexOf(watcher);
       if(index >= 0) {
         self.$$watchers.splice(index, 1);
-        self.$$lastDirtyWatch = null;
+        self.$root.$$lastDirtyWatch = null;
       }
     }
   }
@@ -54,13 +54,13 @@ class Scope11 {
             newValue = watcher.watchFn(scope);
             oldValue = watcher.last;
             if(!scope.$$areEqual(newValue, oldValue, watcher.valueEq)) {
-              self.$$lastDirtyWatch = watcher;
+              scope.$root.$$lastDirtyWatch = watcher;
               watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
               watcher.listenerFn(newValue,
               (oldValue === self.initWatchVal ? newValue : oldValue),
                 scope);
               dirty = true;
-            }else if(self.$$lastDirtyWatch === watcher) {
+            }else if(scope.$root.$$lastDirtyWatch === watcher) {
               continueLoop = false;
               return false;
             }
@@ -87,10 +87,10 @@ class Scope11 {
   public $digest(): void {
     var dirty: boolean;
     var ttl : number = 10;
-    this.$$lastDirtyWatch = null;
+    this.$root.$$lastDirtyWatch = null;
     this.$beginPhase("$digest");
     
-    if(this.$$applyAsyncId) {
+    if(this.$root.$$applyAsyncId) {
       clearTimeout(this.$$applyAsyncId);
       this.$$flushApplyAsync();
     }
@@ -140,8 +140,8 @@ class Scope11 {
     self.$$applyAsyncQueue.push(function() {
       self.$eval(expr);
     });
-    if (self.$$applyAsyncId === null) {
-      self.$$applyAsyncId = setTimeout(function() {
+    if (self.$root.$$applyAsyncId === null) {
+      self.$root.$$applyAsyncId = setTimeout(function() {
         self.$apply(_.bind(self.$$flushApplyAsync, self));
       }, 0);
     }
@@ -168,7 +168,7 @@ class Scope11 {
         console.error(e);
       }
     }
-    this.$$applyAsyncId = null;
+    this.$root.$$applyAsyncId = null;
   }
   
   public $beginPhase(phase: string): void {
@@ -235,9 +235,19 @@ class Scope11 {
     }
   }
   
-  public $new(): Scope11 {
-    var child: Scope11 = Object.create(this);
-    this.$$children.push(child);    
+  public $new(isolated: boolean, parent: Scope11): Scope11 {
+    var child: Scope11;
+    parent = parent || this;
+    if(isolated) {
+      child = new Scope11();
+      child.$root = parent.$root;
+      child.$$asyncQueue = parent.$$asyncQueue;
+      child.$$postDigestQueue = parent.$$postDigestQueue;
+      child.$$applyAsyncQueue = parent.$$applyAsyncQueue;
+    }else {
+      child = Object.create(this);
+    }
+    parent.$$children.push(child);    
     child.$$watchers = [];
     child.$$children = [];
     return child;
