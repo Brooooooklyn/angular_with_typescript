@@ -9,6 +9,7 @@ class Scope11 {
   private $root: Scope11 = this;  
   private $$children: Array<Scope11> = [];
   private $$phase: string = null;
+  public  $parent: Scope11 = null;
   
   private initWatchVal(): void { }
   
@@ -250,7 +251,19 @@ class Scope11 {
     parent.$$children.push(child);    
     child.$$watchers = [];
     child.$$children = [];
+    child.$parent = parent;
     return child;
+  }
+  
+  public $destroy(): void {
+    if(this === this.$root) {
+      return ;
+    }
+    var siblings = this.$parent.$$children;
+    var indexOfThis = siblings.indexOf(this);
+    if (indexOfThis >= 0) {
+      siblings.splice(indexOfThis, 1);
+    }
   }
   
 }
