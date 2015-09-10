@@ -16,7 +16,8 @@ var path = {
   'jstest': [
               './test/spec/scope/digest',
               './test/spec/scope/watchgroup',
-              './test/spec/scope/inherit'
+              './test/spec/scope/inherit',
+              './test/spec/scope/watchcollection'
             ]
 };
 
@@ -44,7 +45,8 @@ gulp.task('compile', function () {
   return gulp.src(path.jsapp)
     .pipe($.sourcemaps.init())
     .pipe($.typescript({
-      out: 'app.js'
+			'experimentalDecorators': true,
+      'out': 'app.js'
     }))
     .pipe(gulp.dest('./dist/'));
 });
@@ -97,4 +99,4 @@ gulp.task('test', ['build-test'], function () {
 });
 
 
-gulp.task('default', $.sequence('compile' , 'build-lib', 'test'));
+gulp.task('default', $.sequence('clean', 'compile' , 'build-lib', 'test'));
