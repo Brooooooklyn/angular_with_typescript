@@ -17,7 +17,8 @@ var path = {
               './test/spec/scope/digest',
               './test/spec/scope/watchgroup',
               './test/spec/scope/inherit',
-              './test/spec/scope/watchcollection'
+              './test/spec/scope/watchcollection',
+              './test/spec/scope/event'
             ]
 };
 
@@ -37,7 +38,7 @@ function buildtest() {
     ).pipe($.concat('spec.js'));
     teststream.push(buildstream);
   }
-  
+
   return teststream;
 }
 
@@ -85,7 +86,7 @@ gulp.task('test', ['build-test'], function () {
       }
     }
   });
-  
+
   gulp.watch('app/**/*.ts', ['compile']);
   gulp.watch('test/spec/**/*.js', ['build-test']);
 
